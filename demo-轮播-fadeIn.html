@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>轮播-渐隐渐现</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script src="http://apps.bdimg.com/libs/jquery/1.9.1/jquery.js"></script>
+<style>
+	html,body,ul,li{
+		margin: 0;
+		padding: 0;
+	}
+	li{
+		list-style: none;
+	}
+	a{
+		text-decoration: none;
+	}
+	.ct{
+		overflow: hidden;
+		width: 400px;
+		height: 303px;
+		margin: 20px auto;
+		position: relative;
+	}
+	.img-ct{
+		position: relative;
+		/*width: ;
+		left: ;*/
+	}
+
+	.img-ct>li{
+		position: absolute;
+		display: none;
+	}
+	.img-ct>li>a{}
+	.img-ct>li>a>img{
+		width: 400px;
+		height: 303px;
+	}
+	.arrow{
+		position: absolute;
+		width: 30px;
+		height: 30px;
+		border-radius: 30px;
+		top: 50%;
+		margin-top: -15px;
+		text-align: center;
+		background: #999;
+		line-height: 30px;
+		color: #fff;
+
+	}
+	.arrow:hover{
+		opacity: 0.8;
+	}
+	.pre{
+		left: 10px;
+	}
+	.next{
+		right: 10px;
+	}
+	.bullet{
+		position: absolute;
+		bottom: 10px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+	.bullet>li{
+		width: 16px;
+		height: 4px;
+		background: #fff;
+		display: inline-block;
+		border-radius: 2px;
+		cursor: pointer;
+
+	}
+	.bullet>.active{
+		background: #666;
+	}
+</style>
+</head>
+<body>
+    <div class="ct">
+    	<ul class="img-ct">
+    		<li data-id=0><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/26.jpg"></a></li>
+			<li data-id=1><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/25.jpg"></a></li>
+			<li data-id=2><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/24.jpg"></a></li>
+			<li data-id=3><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/23.jpg"></a></li>
+    	</ul>
+    	<a href="#" class="pre arrow"><</a>
+    	<a href="#" class="next arrow">></a>
+    	<ul class="bullet">
+    		<li class="active"></li>
+    		<li></li>
+    		<li></li>
+    		<li></li>
+    	</ul>
+    </div>
+
+    <div class="ct">
+    	<ul class="img-ct">
+    		<li data-id=0><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/26.jpg"></a></li>
+			<li data-id=1><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/25.jpg"></a></li>
+			<li data-id=2><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/24.jpg"></a></li>
+			<li data-id=3><a href="#"><img src="http://cdn.jirengu.com/book.jirengu.com/img/23.jpg"></a></li>
+    	</ul>
+    	<a href="#" class="pre arrow"><</a>
+    	<a href="#" class="next arrow">></a>
+    	<ul class="bullet">
+    		<li class="active"></li>
+    		<li></li>
+    		<li></li>
+    		<li></li>
+    	</ul>
+    </div>
+    <script>
+    function fadeCarousel(ct){
+    	this.ct = ct;
+    	this.imgCt = ct.find('.img-ct');
+    	this.item = ct.find('.img-ct').children();
+    	this.imgWidth = ct.find('.img-ct').children().width();
+    	this.pre = ct.find('.pre');
+    	this.next = ct.find('.next');
+    	this.bullet = ct.find('.bullet');
+    	this.imgCount = ct.find('.img-ct').children().size()
+    	this.bind()
+    }
+    fadeCarousel.prototype = {
+    	bind:function(){
+    		var self = this;
+    		console.log(self,this)
+    		var curIdx = 0;
+	    	var isAnimate = false;
+	    	
+	    	this.bullet.find('li').on('click',function(e){
+	    		e.preventDefault();
+	    		var idx1 = $(this).index();
+	    		play(idx1)
+	    		//console.log(idx1)
+	    	})
+	    	this.next.on('click',function(e){
+	    		e.preventDefault();
+	    		play((curIdx+1)%self.imgCount)
+	    	})
+	    	this.pre.on('click',function(e){
+	    		e.preventDefault();
+	    		play((self.imgCount+curIdx-1)%self.imgCount)
+	    	})
+
+	    	play(0)
+	    	function play(idx){
+	    		if(isAnimate){return}
+	    		isAnimate = true;
+	    		self.item.eq(curIdx).fadeOut(1000);
+	    		self.item.eq(idx).fadeIn(1000,function(){
+	    			isAnimate = false;
+	    			curIdx = idx;
+					bullet()
+	    		})
+				
+	    	}
+
+
+	    	function bullet(){
+	    		self.bullet.find('li').removeClass('active')
+	    							.eq(curIdx).addClass('active')
+	    	}
+
+	    	//autoPlay()
+	    	var clock;
+	    	function autoPlay(){
+	    		clock = setInterval(function(){
+	    			play((curIdx+1)%self.imgCount)
+	    		},1000)
+	    	}
+	    	function stop(){
+	    		clearInterval(clock)
+	    	}
+    	}
+    }
+    $('.ct').each(function(){
+    	new fadeCarousel($(this))
+    })
+
+    </script>
+</body>
+</html>
